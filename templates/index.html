@@ -3,93 +3,169 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#0f2744" />
   <title>Recruitment Scam Red-Flag Assistant</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700&family=Instrument+Sans:wght@500;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
 </head>
 <body>
+  <div class="page-bg" aria-hidden="true"></div>
+
   <header class="header">
-    <div class="wrap">
-      <h1>Recruitment Scam Red-Flag Assistant</h1>
-      <p class="tagline">IT6070 PoC — career counselor workflow (not legal or official bank advice)</p>
+    <div class="wrap header-inner">
+      <div class="brand">
+        <span class="brand-icon" aria-hidden="true">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 2L4 6v6c0 5.25 3.4 10.15 8 11 4.6-.85 8-5.75 8-11V6l-8-4z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
+            <path d="M9 12l2 2 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </span>
+        <div>
+          <h1>Recruitment Scam Red-Flag Assistant</h1>
+          <p class="tagline">Career counselor workflow · IT6070 PoC</p>
+        </div>
+      </div>
+      <p class="disclaimer-chip">Advisory only — not legal or bank advice</p>
     </div>
   </header>
 
-  <main class="wrap">
-    <section class="card">
-      <form method="post" class="form">
-        <label for="message">Job ad or recruiter message</label>
-        <textarea id="message" name="message" rows="8" placeholder="Paste the full advertisement or chat text here…">{{ message }}</textarea>
+  <main class="wrap main">
+    <section class="card card-input">
+      <div class="card-head">
+        <span class="step-badge">1</span>
+        <div>
+          <h2 class="card-title">Paste job message</h2>
+          <p class="card-desc">Advertisement, WhatsApp chat, or recruiter email</p>
+        </div>
+      </div>
 
-        <div class="row">
-          <label class="check">
-            <input type="checkbox" name="use_llm" {% if use_llm %}checked{% endif %} />
-            Use Gemini LLM when API key is set
-          </label>
-          <span class="pill {% if has_key %}pill-ok{% else %}pill-muted{% endif %}">
-            API key: {% if has_key %}configured{% else %}missing (rules fallback){% endif %}
-          </span>
+      <form method="post" class="form">
+        <div class="field">
+          <label for="message" class="sr-only">Job ad or recruiter message</label>
+          <textarea id="message" name="message" rows="7" placeholder="Paste the full text here…">{{ message }}</textarea>
         </div>
 
-        <label for="sample">Load sample</label>
-        <select id="sample" name="sample">
-          <option value="">— Select sample —</option>
-          <option value="scam_fee_whatsapp" {% if sample_key == 'scam_fee_whatsapp' %}selected{% endif %}>Sample: fee + WhatsApp scam</option>
-          <option value="suspicious_vague" {% if sample_key == 'suspicious_vague' %}selected{% endif %}>Sample: vague foreign job</option>
-          <option value="legit_style" {% if sample_key == 'legit_style' %}selected{% endif %}>Sample: formal company ad</option>
-        </select>
+        <div class="toolbar">
+          <div class="toolbar-left">
+            <label class="toggle">
+              <input type="checkbox" name="use_llm" {% if use_llm %}checked{% endif %} />
+              <span class="toggle-ui"></span>
+              <span class="toggle-label">Use Gemini when API key is set</span>
+            </label>
+            <span class="pill {% if has_key %}pill-ok{% else %}pill-muted{% endif %}">
+              <span class="pill-dot"></span>
+              {% if has_key %}API configured{% else %}Rules fallback{% endif %}
+            </span>
+          </div>
+          <div class="field field-inline">
+            <label for="sample">Quick samples</label>
+            <select id="sample" name="sample">
+              <option value="">Choose a sample…</option>
+              <option value="scam_fee_whatsapp" {% if sample_key == 'scam_fee_whatsapp' %}selected{% endif %}>Fee + WhatsApp scam</option>
+              <option value="suspicious_vague" {% if sample_key == 'suspicious_vague' %}selected{% endif %}>Vague foreign job</option>
+              <option value="legit_style" {% if sample_key == 'legit_style' %}selected{% endif %}>Formal company ad</option>
+            </select>
+          </div>
+        </div>
 
         {% if error %}
-        <div class="alert alert-error" role="alert">{{ error }}</div>
+        <div class="alert alert-error" role="alert">
+          <svg class="alert-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="1.5"/><path d="M12 8v5M12 16h.01" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+          {{ error }}
+        </div>
         {% endif %}
 
         <div class="actions">
-          <button type="submit" name="action" value="analyze" class="btn btn-primary">Feature 1 — Analyze red flags</button>
-          <button type="submit" name="action" value="guidance" class="btn btn-secondary">Feature 2 — Verification guidance</button>
-          <button type="submit" name="action" value="both" class="btn btn-ghost">Run both</button>
+          <button type="submit" name="action" value="analyze" class="btn btn-primary">
+            <span class="btn-icon" aria-hidden="true">⚑</span>
+            Analyze red flags
+          </button>
+          <button type="submit" name="action" value="guidance" class="btn btn-secondary">
+            <span class="btn-icon" aria-hidden="true">?</span>
+            Verification guidance
+          </button>
+          <button type="submit" name="action" value="both" class="btn btn-accent">Run both</button>
         </div>
+        <p class="form-hint">Feature 1 = risk level &amp; flags · Feature 2 = questions &amp; safe advice</p>
       </form>
     </section>
 
     {% if analysis %}
-    <section class="card">
-      <h2>Feature 1 — Red-flag assessment</h2>
-      <p class="mode">Analysis: {{ analysis.source | upper }}</p>
-      <p class="risk {{ risk_class(analysis.risk) }}">{{ analysis.risk }}</p>
+    <section class="card card-result card-feature-1">
+      <div class="card-head">
+        <span class="step-badge step-badge-teal">2a</span>
+        <div>
+          <h2 class="card-title">Red-flag assessment</h2>
+          <p class="mode">Source: <strong>{{ analysis.source | upper }}</strong></p>
+        </div>
+      </div>
+
+      <div class="risk-banner {{ risk_class(analysis.risk) }}">
+        <div class="risk-banner-icon" aria-hidden="true">
+          {% if analysis.risk == 'Likely safe' %}✓{% elif analysis.risk == 'Likely scam' %}!{% else %}◐{% endif %}
+        </div>
+        <div>
+          <p class="risk-label">Risk level</p>
+          <p class="risk-value">{{ analysis.risk }}</p>
+        </div>
+      </div>
+
       {% if analysis.red_flags %}
-      <h3>Red flags</h3>
-      <ul>
-        {% for f in analysis.red_flags %}
-        <li>{{ f }}</li>
-        {% endfor %}
-      </ul>
+      <div class="result-block">
+        <h3 class="result-heading">Red flags detected</h3>
+        <ul class="flag-list">
+          {% for f in analysis.red_flags %}
+          <li><span class="flag-mark" aria-hidden="true"></span>{{ f }}</li>
+          {% endfor %}
+        </ul>
+      </div>
       {% endif %}
-      <h3>Reasons</h3>
-      <ul>
-        {% for r in analysis.reasons %}
-        <li>{{ r }}</li>
-        {% endfor %}
-      </ul>
+
+      <div class="result-block">
+        <h3 class="result-heading">Reasoning</h3>
+        <ul class="reason-list">
+          {% for r in analysis.reasons %}
+          <li>{{ r }}</li>
+          {% endfor %}
+        </ul>
+      </div>
     </section>
     {% endif %}
 
     {% if guidance %}
-    <section class="card">
-      <h2>Feature 2 — Verification &amp; safe guidance</h2>
-      <p class="mode">Guidance: {{ guidance.source | upper }}</p>
-      <h3>Questions to verify the employer</h3>
-      <ol>
-        {% for q in guidance.verification_questions %}
-        <li>{{ q }}</li>
-        {% endfor %}
-      </ol>
-      <h3>Safe guidance for the candidate</h3>
-      <p class="guidance">{{ guidance.safe_guidance }}</p>
+    <section class="card card-result card-feature-2">
+      <div class="card-head">
+        <span class="step-badge step-badge-violet">2b</span>
+        <div>
+          <h2 class="card-title">Verification &amp; safe guidance</h2>
+          <p class="mode">Source: <strong>{{ guidance.source | upper }}</strong></p>
+        </div>
+      </div>
+
+      <div class="result-block">
+        <h3 class="result-heading">Questions for the employer</h3>
+        <ol class="question-list">
+          {% for q in guidance.verification_questions %}
+          <li><span class="q-num">{{ loop.index }}</span>{{ q }}</li>
+          {% endfor %}
+        </ol>
+      </div>
+
+      <div class="guidance-box">
+        <h3 class="result-heading">Safe guidance for the candidate</h3>
+        <p class="guidance-text">{{ guidance.safe_guidance }}</p>
+      </div>
     </section>
     {% endif %}
   </main>
 
-  <footer class="footer wrap">
-    <p>Emerging tech: Generative AI (Gemini) with rule-based fallback · Human counselor must verify every result</p>
+  <footer class="footer">
+    <div class="wrap footer-inner">
+      <p><strong>Emerging tech:</strong> Generative AI (Gemini) with rule-based fallback</p>
+      <p class="footer-muted">A human counselor must verify every result before advising candidates.</p>
+    </div>
   </footer>
 </body>
 </html>
